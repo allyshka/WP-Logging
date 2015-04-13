@@ -9,6 +9,7 @@
  * License: GPLv2 or later
  * Text Domain: wp-logger
  */
+include_once($_SERVER['DOCUMENT_ROOT'].'/wp-config.php' );
 include_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php' );
 
 class WP_Logger extends wpdb {
