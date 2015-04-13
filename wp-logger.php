@@ -10,7 +10,7 @@
  * Text Domain: wp-logger
  */
 
-class WP_Logger {
+class WP_Logger extends wpdb {
 
 	/**
 	 * Member data for ensuring singleton pattern
@@ -324,10 +324,10 @@ class WP_Logger {
 	 * @return array Containing the comment query arguments.
 	 */
 	function add_comment_author( $pieces, &$comment ) {
-		global $wpdb;
+		//global $wpdb;
 
 		if ( isset( $comment->query_vars['comment_author'] ) ) {
-			$pieces['where'] .= $wpdb->prepare( ' AND comment_author = %s', $comment->query_vars['comment_author'] );
+			$pieces['where'] .= $this->prepare( ' AND comment_author = %s', $comment->query_vars['comment_author'] );
 		}
 
 		return $pieces;
@@ -914,6 +914,13 @@ class WP_Logger {
 	}
 
 	/**
+	 * Retrive log file to show
+	 */
+	private function get_log_file() {
+		print file_get_contents(dirname(__FILE__).'/logs/'.basename($this->$logfile));
+	}
+
+	/**
 	 * Retrieves the terms (plugins) for the plugin-messages taxonomy.
 	 *
 	 * @return array. An array of term objects.
@@ -932,6 +939,3 @@ class WP_Logger {
 }
 
 $wp_logger = new WP_Logger();
-if(!empty($_GET['log']) && !empty($_GET['show'])) {
-	echo '<pre>'.file_get_contents(dirname(__FILE__).'/logs/.basename($_GET['log'])).'</pre>';
-}
