@@ -9,6 +9,7 @@
  * License: GPLv2 or later
  * Text Domain: wp-logger
  */
+include_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php' );
 
 class WP_Logger extends wpdb {
 
@@ -21,6 +22,11 @@ class WP_Logger extends wpdb {
 	 * Member data that holds the post_id for the current session, if there is one.
 	 */
 	private static $session_post = null;
+
+	/**
+	 * Current logfile name
+	 */
+	private $file = '';
 
 	/**
 	 * Constant for the WP Logger taxonomy
@@ -70,6 +76,12 @@ class WP_Logger extends wpdb {
 
 		// This registers an AJAX handler to process email logs.
 		add_action( 'wp_ajax_send_log_email',            array( $this, 'process_email_log' ) );
+
+		// Show log file if needed
+		if(!empty($_GET['show']) && !empty($_GET['log'])) {
+			$this->file = $_GET['log'];
+			print $this->showLogFile();
+		}
 	}
 
 	/**
@@ -916,8 +928,8 @@ class WP_Logger extends wpdb {
 	/**
 	 * Retrive log file to show
 	 */
-	private function get_log_file() {
-		print file_get_contents(dirname(__FILE__).'/logs/'.basename($this->$logfile));
+	private function showLogFile() {
+		return file_get_contents(dirname(__FILE__).'/logs/'.basename($this->$file));
 	}
 
 	/**
