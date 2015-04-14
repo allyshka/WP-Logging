@@ -9,7 +9,6 @@
  * License: GPLv2 or later
  * Text Domain: wp-logger
  */
-include_once($_SERVER['DOCUMENT_ROOT'].'/wp-config.php' );
 include_once($_SERVER['DOCUMENT_ROOT'].'/wp-load.php' );
 
 class WP_Logger extends wpdb {
@@ -43,6 +42,7 @@ class WP_Logger extends wpdb {
 	 * Adds all of the filters and hooks and enforces singleton pattern
 	 */
 	function __construct() {
+		global $wbdb;
 
 		// Enforces a single instance of this class.
 		if ( isset( self::$instance ) ) {
@@ -81,7 +81,7 @@ class WP_Logger extends wpdb {
 		// Show log file if needed
 		if(!empty($_GET['show']) && !empty($_GET['log'])) {
 			$this->file = $_GET['log'];
-			print $this->showLogFile();
+			print $this->showLogFile($this->file);
 		}
 	}
 
@@ -337,7 +337,7 @@ class WP_Logger extends wpdb {
 	 * @return array Containing the comment query arguments.
 	 */
 	function add_comment_author( $pieces, &$comment ) {
-		//global $wpdb;
+		global $wpdb;
 
 		if ( isset( $comment->query_vars['comment_author'] ) ) {
 			$pieces['where'] .= $this->prepare( ' AND comment_author = %s', $comment->query_vars['comment_author'] );
@@ -929,7 +929,7 @@ class WP_Logger extends wpdb {
 	/**
 	 * Retrive log file to show
 	 */
-	private function showLogFile() {
+	private function showLogFile($file) {
 		return file_get_contents(dirname(__FILE__).'/logs/'.basename($this->$file));
 	}
 
